@@ -19,5 +19,8 @@ def editar_livro():
 def listar_livros():
     pass
 
+def listar_livro_por_nome():
+    pass
+
 def excluir_livro():
     pass
