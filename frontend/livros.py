@@ -3,6 +3,7 @@ from .funcoes import *
 from PIL import Image
 from tkinter import filedialog
 from backend.imagem import processar_imagem
+from backend.database import *
 
 app = CTk()
 popup_cadastrar = None
@@ -65,7 +66,11 @@ def abrir_popcad():
         paginas = qtd_pags.get()
         imagem = processar_imagem(caminho_imagem)
 
-        #função do back q cadastra
+        cad = cadastrar_livro(nome_livro, autor_livro, descricao_livro, paginas, imagem)
+        if cad:
+            print("foi")
+        else:
+            print("Não foi")
 
     btn_salvar = CTkButton(popup_cadastrar, command=salvar, width=200, text="Salvar")
     btn_salvar.pack(pady=5)

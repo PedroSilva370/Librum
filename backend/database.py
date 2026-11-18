@@ -1,6 +1,6 @@
 import sqlite3 as sql
 
-NOME_DB = "booktrack"
+NOME_DB = "database/booktrack.db"
 
 def criar_db():
     try:
@@ -10,8 +10,14 @@ def criar_db():
     except sql.Error as erro:
         print(f"Falha ao criar o Banco de Dados: {erro}")
 
-def cadastrar_livro():
-    pass
+def cadastrar_livro(nome, autor, descricao, paginas, imagem):
+    try:
+        with sql.connect(NOME_DB) as db:
+            cur = db.cursor()
+            cur.execute("INSERT INTO biblioteca (nome, autor, description, qtd_pags, img) VALUES (?, ?, ?, ?, ?)", (nome, autor, descricao, paginas, imagem))
+        return True
+    except sql.Error as erro:
+        return False
 
 def editar_livro():
     pass
