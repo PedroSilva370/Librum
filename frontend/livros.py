@@ -10,7 +10,11 @@ popup_cadastrar = None
 caminho_imagem = None
 
 app.title("Librum")
-app.geometry("1000x650")
+largura = 1450
+altura = 900
+x = (app.winfo_screenwidth() - largura) // 2
+y = (app.winfo_screenheight() - altura) // 2
+app.geometry(f"{largura}x{altura}+{x}+{y}")
 app.resizable(False, False)
 
 frame_menu = CTkFrame(app, width=1000, height=30)
@@ -93,7 +97,7 @@ frame_inicio = CTkFrame(app)
 CTkLabel(frame_inicio, text="Librum", font=("Poppins", 27, "bold")).pack(pady=(15, 20))
 
 Scrollbar_livros = CTkScrollableFrame(frame_inicio, width=950, height=100, corner_radius=12, border_width=1, border_color="#6495ed", orientation='horizontal')
-Scrollbar_livros.pack()
+Scrollbar_livros.pack(fill="x", padx=5, pady=5)
 
 frame_inicio.pack(fill="both", expand=True)
 
