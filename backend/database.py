@@ -22,8 +22,14 @@ def cadastrar_livro(nome, autor, descricao, paginas, imagem):
 def editar_livro():
     pass
 
-def listar_livros():
-    pass
+def listar_livros(limite=30, offset=0):
+    try:
+        with sql.connect(NOME_DB) as db:
+            cur = db.cursor()
+            cur.execute("SELECT nome, autor, img FROM biblioteca LIMIT ? OFFSET ?", (limite, offset))
+            return cur.fetchall()
+    except sql.Error as erro:
+        return False
 
 def listar_livro_por_nome():
     pass

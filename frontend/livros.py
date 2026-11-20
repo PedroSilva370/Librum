@@ -1,9 +1,11 @@
 from customtkinter import * 
+from tkinter import messagebox
 from .funcoes import *
 from PIL import Image
 from tkinter import filedialog
 from backend.imagem import processar_imagem
 from backend.database import *
+from io import BytesIO
 
 app = CTk()
 popup_cadastrar = None
@@ -64,17 +66,15 @@ def abrir_popcad():
     CTkButton(popup_cadastrar, text="Escolher imagem", width=200, command=selecionar_imagem).pack()
 
     def salvar():
-        nome_livro = nome.get()
-        autor_livro = autor.get()
-        descricao_livro = descricao.get()
-        paginas = qtd_pags.get()
-        imagem = processar_imagem(caminho_imagem)
-
-        cad = cadastrar_livro(nome_livro, autor_livro, descricao_livro, paginas, imagem)
-        if cad:
-            print("foi")
+        nome_livro = nome.lower().get()
+        autor_livro = autor.lower().get()
+        descricao_livro = descricao.lower().get()
+        if isinstance(qtd_pags, int) and qtd_pags < 4:
+            paginas = qtd_pags.get()
         else:
-            print("Não foi")
+            messagebox.showerror("Erro", "A quantidade de páginas deve ser um número inteiro ou maior que 4.")
+        imagem = processar_imagem(caminho_imagem)
+        cadastrar_livro(nome_livro, autor_livro, descricao_livro, paginas, imagem)
 
     btn_salvar = CTkButton(popup_cadastrar, command=salvar, width=200, text="Salvar")
     btn_salvar.pack(pady=5)
@@ -96,8 +96,21 @@ frame_inicio = CTkFrame(app)
 
 CTkLabel(frame_inicio, text="Librum", font=("Poppins", 27, "bold")).pack(pady=(15, 20))
 
-Scrollbar_livros = CTkScrollableFrame(frame_inicio, width=950, height=100, corner_radius=12, border_width=1, border_color="#6495ed", orientation='horizontal')
+Scrollbar_livros = CTkScrollableFrame(frame_inicio, width=950, height=175, corner_radius=12, border_width=1, border_color="#6495ed", orientation='horizontal')
 Scrollbar_livros.pack(fill="x", padx=5, pady=5)
+
+livros = listar_livros()
+if livros:
+    for livro in livros:
+        nome, autor, img_db = livro
+
+        imagem_pil = Image.open(BytesIO(img_db))
+        imagem_ctk = CTkImage(light_image=imagem_pil, dark_image=imagem_pil, size=(120, 160))
+
+        label_imagem = CTkLabel(Scrollbar_livros, text="", image=imagem_ctk)
+        label_imagem.bind("<Button-1>", lambda: abrir_livro())
+        label_imagem.pack(padx=10, pady=10)
+        label_imagem.image = imagem_ctk
 
 frame_inicio.pack(fill="both", expand=True)
 
