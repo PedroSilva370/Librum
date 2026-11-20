@@ -96,19 +96,49 @@ frame_inicio = CTkFrame(app)
 
 CTkLabel(frame_inicio, text="Librum", font=("Poppins", 27, "bold")).pack(pady=(15, 20))
 
-Scrollbar_livros = CTkScrollableFrame(frame_inicio, width=950, height=175, corner_radius=12, border_width=1, border_color="#6495ed", orientation='horizontal')
+Scrollbar_livros = CTkScrollableFrame(frame_inicio, width=950, height=175, corner_radius=10, border_width=1, border_color="#6495ed", orientation='horizontal')
 Scrollbar_livros.pack(fill="x", padx=5, pady=5)
+
+def abrir_livro(id_livro):
+    busca = listar_livro_por_id(id_livro)
+    if busca is None:
+        print("Livro não encontrado!")
+        return
+    if busca is False:
+        print("Erro na consulta!")
+        return
+
+    id_book, nome, autor, descricao, qtd_pags, img = busca
+    frame_livro = CTkFrame(app)
+    abrir_janela(frame_livro, frame_inicio)
+
+    retangulo_img = CTkFrame(frame_livro, width=300, height=400, fg_color="#FFFFFF", corner_radius=0)
+    retangulo_img.pack(side="left", anchor="nw", padx=35, pady=25)
+
+    retangulo_text = CTkFrame(frame_livro, width=1035, height=150, border_width=1, border_color="#6495ed", fg_color="transparent", corner_radius=10)
+    retangulo_text.pack_propagate(False)
+    retangulo_text.pack(side="right", anchor="nw", padx=35, pady=25)
+
+    CTkLabel(retangulo_text, text=nome.title(), font=("Georgia", 30)).pack(side="top", anchor="nw", padx=20, pady=(15, 0))
+    CTkLabel(retangulo_text, text="Autor:", text_color="#747474", font=("Georgia", 15)).pack(side="top", anchor="w", padx=20, pady=(0, 0))
+    CTkLabel(retangulo_text, text=autor.title(), font=("Arial", 15)).pack(side="top", anchor="w", padx=20, pady=(0, 0))
+
+    imagem_pil = Image.open(BytesIO(img))
+    imagem_ctk = CTkImage(light_image=imagem_pil, dark_image=imagem_pil, size=(300, 400))
+    label_imagem = CTkLabel(retangulo_img, text="", image=imagem_ctk)
+    label_imagem.pack(fill="both", expand=True)
+    label_imagem.image = imagem_ctk
 
 livros = listar_livros()
 if livros:
     for livro in livros:
-        nome, autor, img_db = livro
+        id_book, nome, autor, img_db = livro
 
         imagem_pil = Image.open(BytesIO(img_db))
         imagem_ctk = CTkImage(light_image=imagem_pil, dark_image=imagem_pil, size=(120, 160))
 
         label_imagem = CTkLabel(Scrollbar_livros, text="", image=imagem_ctk)
-        label_imagem.bind("<Button-1>", lambda: abrir_livro())
+        label_imagem.bind("<Button-1>", lambda evento, id=id_book: abrir_livro(id))
         label_imagem.pack(padx=10, pady=10)
         label_imagem.image = imagem_ctk
 
