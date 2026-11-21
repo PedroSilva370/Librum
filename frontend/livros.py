@@ -44,6 +44,9 @@ def abrir_popcad():
     autor = CTkEntry(popup_cadastrar, width=200, placeholder_text="Autor do Livro")
     autor.pack(pady=5)
 
+    ano = CTkEntry(popup_cadastrar, width=200, placeholder_text="Ano de Publicação")
+    ano.pack(pady=5)
+
     descricao = CTkEntry(popup_cadastrar, width=200, placeholder_text="Descrição (Opcional)")
     descricao.pack(pady=5)
 
@@ -66,15 +69,21 @@ def abrir_popcad():
     CTkButton(popup_cadastrar, text="Escolher imagem", width=200, command=selecionar_imagem).pack()
 
     def salvar():
-        nome_livro = nome.lower().get()
-        autor_livro = autor.lower().get()
-        descricao_livro = descricao.lower().get()
-        if isinstance(qtd_pags, int) and qtd_pags < 4:
-            paginas = qtd_pags.get()
+        nome_livro = nome.get().lower()
+        autor_livro = autor.get().lower()
+        ano_livro = ano.get()
+        if ano_livro.isdigit():
+            ano_livro = int(ano_livro)
+        else:
+            messagebox.showerror("Erro", "O ano de publicação do livro deve ser um número inteiro.")
+        descricao_livro = descricao.get().lower()
+        paginas = qtd_pags.get()
+        if paginas.isdigit():
+            paginas = int(paginas)
         else:
             messagebox.showerror("Erro", "A quantidade de páginas deve ser um número inteiro ou maior que 4.")
         imagem = processar_imagem(caminho_imagem)
-        cadastrar_livro(nome_livro, autor_livro, descricao_livro, paginas, imagem)
+        cadastrar_livro(nome_livro, autor_livro, ano_livro, descricao_livro, paginas, imagem)
 
     btn_salvar = CTkButton(popup_cadastrar, command=salvar, width=200, text="Salvar")
     btn_salvar.pack(pady=5)
@@ -108,7 +117,7 @@ def abrir_livro(id_livro):
         print("Erro na consulta!")
         return
 
-    id_book, nome, autor, descricao, qtd_pags, img = busca
+    id_book, nome, autor, ano, descricao, qtd_pags, img = busca
     frame_livro = CTkFrame(app)
     abrir_janela(frame_livro, frame_inicio)
 
@@ -119,9 +128,10 @@ def abrir_livro(id_livro):
     retangulo_text.pack_propagate(False)
     retangulo_text.pack(side="right", anchor="nw", padx=35, pady=25)
 
-    CTkLabel(retangulo_text, text=nome.title(), font=("Georgia", 30)).pack(side="top", anchor="nw", padx=20, pady=(15, 0))
-    CTkLabel(retangulo_text, text="Autor:", text_color="#747474", font=("Georgia", 15)).pack(side="top", anchor="w", padx=20, pady=(0, 0))
-    CTkLabel(retangulo_text, text=autor.title(), font=("Arial", 15)).pack(side="top", anchor="w", padx=20, pady=(0, 0))
+    CTkLabel(retangulo_text, text=nome.title(), font=("Georgia", 30)).pack(side="top", anchor="nw", padx=20, pady=(20, 0))
+    CTkLabel(retangulo_text, text=f"Autor: {autor.title()}", font=("Arial", 15)).pack(side="top", anchor="w", padx=20, pady=0)
+    CTkLabel(retangulo_text, text=f"N.º de páginas: {qtd_pags}", font=("Arial", 15)).pack(side="top", anchor="w", padx=20, pady=0)
+    CTkLabel(retangulo_text, text=f"Ano: {ano}", font=("Arial", 15)).pack(side="top", anchor="w", padx=20, pady=0)
 
     imagem_pil = Image.open(BytesIO(img))
     imagem_ctk = CTkImage(light_image=imagem_pil, dark_image=imagem_pil, size=(300, 400))
