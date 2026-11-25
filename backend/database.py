@@ -14,9 +14,10 @@ def cadastrar_livro(nome, autor, ano, descricao, paginas, imagem):
     try:
         with sql.connect(NOME_DB) as db:
             cur = db.cursor()
-            cur.execute("INSERT INTO biblioteca (nome, autor, ano, description, qtd_pags, img) VALUES (?, ?, ?, ?, ?)", (nome, autor, ano, descricao, paginas, imagem))
-        return True
+            cur.execute("INSERT INTO biblioteca (nome, autor, ano, description, qtd_pags, img) VALUES (?, ?, ?, ?, ?, ?)", (nome, autor, ano, descricao, paginas, imagem))
+            return True
     except sql.Error as erro:
+        print(erro)
         return False
 
 def editar_livro():
