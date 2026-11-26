@@ -9,9 +9,12 @@ from io import BytesIO
 
 app = CTk()
 popup_cadastrar = None
+popup_autenticar = None
 caminho_imagem = None
 Scrollbar_livros = None
 font_text = "Georgia"
+cor_principal = "#0f4bbb"
+# "#6495ed"
 
 app.title("Librum")
 largura = 1450
@@ -56,6 +59,7 @@ def abrir_popcad():
     popup_cadastrar = CTkToplevel(app)
     popup_cadastrar.title("Cadastrar")
     popup_cadastrar.geometry("550x450")
+    popup_cadastrar.resizable(False, False)
     popup_cadastrar.grab_set()
 
     nome = CTkEntry(popup_cadastrar, width=200, placeholder_text="Nome do Livro")
@@ -119,21 +123,50 @@ def abrir_popcad():
         global popup_cadastrar
         popup_cadastrar.destroy()
     
-btn_pesquisar = CTkButton(frame_menu, text="Pesquisar", width=65, height=25)
+btn_pesquisar = CTkButton(frame_menu, text="Pesquisar", fg_color=cor_principal, width=65, height=25)
 btn_pesquisar.pack(side="right", padx=5, pady=10)
 
-campo_pesquisar = CTkEntry(frame_menu, placeholder_text="Pesquisar", width=100, height=25)
+campo_pesquisar = CTkEntry(frame_menu, placeholder_text="Pesquisar", width=125, height=25)
 campo_pesquisar.pack(side="right", padx=10, pady=10)
 
-btn_inicio = CTkButton(frame_menu, text="Librum", font=(font_text, 19), text_color="#6495ed", command=lambda: abrir_janela(frame_inicio), fg_color="transparent", hover_color="#333333")
+btn_inicio = CTkButton(frame_menu, text="Librum", font=(font_text, 19), text_color=cor_principal, command=lambda: abrir_janela(frame_inicio), fg_color="transparent", hover_color="#333333")
 btn_inicio.place(relx=0.5, rely=0.5, anchor="center")
 
 btn_cadastrar = CTkButton(frame_menu, text="Cadastrar", command=abrir_popcad, fg_color="transparent", hover_color="#333333")
 btn_cadastrar.pack(side="left", padx=10, pady=10)
 
-Scrollbar_livros = CTkScrollableFrame(frame_inicio, width=950, height=175, corner_radius=10, border_width=1, border_color="#6495ed", orientation='horizontal')
+Scrollbar_livros = CTkScrollableFrame(frame_inicio, width=950, height=175, corner_radius=10, border_width=1, border_color=cor_principal, orientation='horizontal')
 Scrollbar_livros.pack(fill="x", padx=5, pady=5)
 aplicar_livro()
+
+def abrir_autenticador():
+    global popup_autenticar
+
+    if popup_autenticar is not None:
+        try:
+            if popup_autenticar.winfo_exists():
+                popup_autenticar.focus_force()
+                return
+        except:
+            popup_autenticar = None
+
+    popup_autenticar = CTkToplevel(app)
+    popup_autenticar.title("Autenticador")
+    popup_autenticar.geometry("400x450")
+    popup_autenticar.resizable(False, False)
+    popup_autenticar.grab_set()
+
+    CTkLabel(popup_autenticar, text="Autenticador Requerida", font=(font_text, 22, "bold")).pack(pady=15)
+
+    imagem_usuario = CTkImage(light_image=Image.open("assets/icone_usuario3.png"), dark_image=Image.open("assets/icone_usuario3.png"), size=(90, 90))
+    user_image = CTkLabel(popup_autenticar, text="", image=imagem_usuario, width=65, height=65, fg_color="transparent")
+    user_image.pack()
+
+    CTkLabel(popup_autenticar, text="Coloque a senha de permição", font=("Arial", 15), text_color="#7C7C7C").pack(pady=5)
+    entrada_senha = CTkEntry(popup_autenticar, placeholder_text="Senha de Verificação", width=200, height=30)
+    entrada_senha.pack()
+
+    CTkButton(popup_autenticar, text="Cancelar", font=("Arial", 15), command=popup_autenticar.destroy).pack(side="left", anchor="s", pady=20, padx=20)
 
 def abrir_livro(id_livro):
     busca = listar_livro_por_id(id_livro)
@@ -151,7 +184,7 @@ def abrir_livro(id_livro):
     retangulo_img = CTkFrame(frame_livro, width=300, height=350, fg_color="#FFFFFF", corner_radius=0)
     retangulo_img.pack(side="left", anchor="nw", padx=35, pady=25)
 
-    retangulo_text = CTkFrame(frame_livro, width=1035, height=200, border_width=1, border_color="#6495ed", fg_color="transparent", corner_radius=10)
+    retangulo_text = CTkFrame(frame_livro, width=1035, height=200, border_width=1, border_color=cor_principal, fg_color="transparent", corner_radius=10)
     retangulo_text.pack_propagate(False)
     retangulo_text.pack(side="top", anchor="nw", padx=35, pady=25)
 
@@ -159,8 +192,9 @@ def abrir_livro(id_livro):
     CTkLabel(retangulo_text, text=f"Autor: {autor.title()}", font=("Arial", 15)).pack(side="top", anchor="w", padx=20, pady=2.5)
     CTkLabel(retangulo_text, text=f"N.º de páginas: {qtd_pags}", font=("Arial", 15)).pack(side="top", anchor="w", padx=20, pady=2.5)
     CTkLabel(retangulo_text, text=f"Ano: {ano}", font=("Arial", 15)).pack(side="top", anchor="w", padx=20, pady=2.5)
+    CTkLabel(retangulo_text, text=f"ID: {id_book}", font=("Arial", 15)).place(relx=1.0, x=-20, y=15, anchor="ne")
 
-    retangulo_desc = CTkFrame(frame_livro, width=1035, height=150, border_width=1, border_color="#6495ed", fg_color="transparent", corner_radius=10)
+    retangulo_desc = CTkFrame(frame_livro, width=1035, height=150, border_width=1, border_color=cor_principal, fg_color="transparent", corner_radius=10)
     retangulo_desc.pack_propagate(False)
     retangulo_desc.pack(side="top", anchor="nw", padx=35, pady=25)
 
@@ -172,6 +206,9 @@ def abrir_livro(id_livro):
     label_imagem = CTkLabel(retangulo_img, text="", image=imagem_ctk)
     label_imagem.pack(fill="both", expand=True)
     label_imagem.image = imagem_ctk
+
+    btn_editar = CTkButton(frame_livro, text="Editar Livro", font=("Arial", 15), command=abrir_autenticador, width=175, fg_color=cor_principal)
+    btn_editar.pack()
 
 frame_inicio.pack(fill="both", expand=True)
 
